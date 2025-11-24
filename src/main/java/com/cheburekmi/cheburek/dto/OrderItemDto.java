@@ -2,6 +2,7 @@ package com.cheburekmi.cheburek.dto;
 
 import lombok.Data;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 public class OrderItemDto {
@@ -12,4 +13,5 @@ public class OrderItemDto {
     private BigDecimal price;
     private Integer quantity;
     private Boolean isXL;
+    private List<OrderItemAddonDto> addons;
 }

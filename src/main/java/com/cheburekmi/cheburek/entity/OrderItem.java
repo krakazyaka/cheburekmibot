@@ -3,6 +3,7 @@ package com.cheburekmi.cheburek.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 @Entity
@@ -29,4 +30,7 @@ public class OrderItem {
     
     @Column(name = "is_xl", nullable = false)
     private Boolean isXL = false;
+    
+    @OneToMany(mappedBy = "orderItem", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderItemAddon> addons;
 }

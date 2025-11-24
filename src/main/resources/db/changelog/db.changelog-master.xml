@@ -144,4 +144,80 @@
                 referencedColumnNames="id"/>
     </changeSet>
 
+    <changeSet id="2" author="cheburek">
+        <createTable tableName="addons">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="varchar(500)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="price" type="decimal(10,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="image" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="available" type="boolean" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="menu_item_addons">
+            <column name="menu_item_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="addon_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey
+                tableName="menu_item_addons"
+                columnNames="menu_item_id, addon_id"
+                constraintName="pk_menu_item_addons"/>
+
+        <addForeignKeyConstraint
+                baseTableName="menu_item_addons"
+                baseColumnNames="menu_item_id"
+                constraintName="fk_menu_item_addons_menu_item"
+                referencedTableName="menu_items"
+                referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint
+                baseTableName="menu_item_addons"
+                baseColumnNames="addon_id"
+                constraintName="fk_menu_item_addons_addon"
+                referencedTableName="addons"
+                referencedColumnNames="id"/>
+
+        <createTable tableName="order_item_addons">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="order_item_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="addon_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="price" type="decimal(10,2)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint
+                baseTableName="order_item_addons"
+                baseColumnNames="order_item_id"
+                constraintName="fk_order_item_addons_order_item"
+                referencedTableName="order_items"
+                referencedColumnNames="id"/>
+    </changeSet>
+
 </databaseChangeLog>

@@ -7,9 +7,10 @@ import java.util.Set;
 
 @Data
 @Entity
-@Table(name = "menu_items")
-public class MenuItem {
+@Table(name = "addons")
+public class Addon {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
     @Column(nullable = false)
@@ -22,23 +23,11 @@ public class MenuItem {
     private BigDecimal price;
     
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private MenuCategory category;
-    
-    @Column(nullable = false)
     private String image;
-    
-    @Column(name = "has_xl", nullable = false)
-    private Boolean hasXL = false;
     
     @Column(nullable = false)
     private Boolean available = true;
     
-    @ManyToMany
-    @JoinTable(
-        name = "menu_item_addons",
-        joinColumns = @JoinColumn(name = "menu_item_id"),
-        inverseJoinColumns = @JoinColumn(name = "addon_id")
-    )
-    private Set<Addon> addons;
+    @ManyToMany(mappedBy = "addons")
+    private Set<MenuItem> menuItems;
 }
