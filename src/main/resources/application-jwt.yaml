@@ -1,7 +1,0 @@
-jwt:
-  secret: ${JWT_SECRET:your-256-bit-secret-key-here-change-in-production-please-make-it-long-enough}
-  expiration: 604800000
-
-telegram:
-  bot:
-    token: ${TELEGRAM_BOT_TOKEN}

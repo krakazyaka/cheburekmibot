@@ -5,6 +5,7 @@ import com.cheburekmi.cheburek.service.AddonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,18 +32,21 @@ public class AddonController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<AddonDto> createAddon(@RequestBody AddonDto addonDto) {
         AddonDto createdAddon = addonService.createAddon(addonDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdAddon);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<AddonDto> updateAddon(@PathVariable Long id, @RequestBody AddonDto addonDto) {
         AddonDto updatedAddon = addonService.updateAddon(id, addonDto);
         return ResponseEntity.ok(updatedAddon);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteAddon(@PathVariable Long id) {
         addonService.deleteAddon(id);
         return ResponseEntity.noContent().build();

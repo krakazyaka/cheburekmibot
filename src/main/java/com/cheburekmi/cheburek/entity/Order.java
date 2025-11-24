@@ -33,7 +33,7 @@ public class Order {
     @Column(name = "notes")
     private String notes;
 
-    @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems;
     
     @Column(name = "created_at", nullable = false)

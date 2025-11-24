@@ -102,6 +102,28 @@ The backend follows a strict three-layer architecture:
 
 ### Recent Changes (November 24, 2025)
 
+**JWT-Based Authentication System**:
+- Implemented complete authentication system using JWT tokens
+- Telegram initData validation with HMAC-SHA256 signature verification
+- Auth date freshness check (5-minute window) to prevent replay attacks
+- Role-based access control with USER and ADMIN roles
+- Spring Security integration with custom JWT filter
+- Endpoint protection with @PreAuthorize annotations
+- Ownership validation: users can only access their own data
+
+**Security Architecture**:
+- **AuthController**: POST /auth/login endpoint for Telegram authentication
+- **JwtService**: JWT token generation and validation using JJWT 0.12.5
+- **TelegramAuthService**: Telegram initData validation with replay protection
+- **JwtAuthenticationFilter**: Intercepts requests and validates JWT tokens
+- **SecurityConfig**: Configures Spring Security with stateless session management
+
+**Access Control**:
+- Public endpoints: /auth/**, /api/menu/**, /api/addons/**
+- User endpoints: /api/orders/**, /api/user/** (requires ROLE_USER + ownership validation)
+- Admin endpoints: /admin/** (requires ROLE_ADMIN)
+- Addon mutations: POST/PUT/DELETE /api/addons/** (requires ROLE_ADMIN)
+
 **AdminController Implementation**:
 - Added admin functionality for order and loyalty management
 - Implemented order status workflow: CREATED → IN_PROGRESS → READY → DONE
@@ -160,5 +182,7 @@ The backend follows a strict three-layer architecture:
 
 ### Configuration
 - Database connection via environment variables (DATABASE_URL, PGUSER, PGPASSWORD)
+- JWT configuration: JWT_SECRET (256-bit key), expiration 7 days
+- Telegram Bot Token: TELEGRAM_BOT_TOKEN (for initData validation)
 - Server runs on localhost:8080
 - Liquibase automatically applies migrations on startup

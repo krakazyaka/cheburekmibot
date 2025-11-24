@@ -21,6 +21,14 @@ spring:
     change-log: classpath:db/changelog/db.changelog-master.xml
     enabled: true
 
+jwt:
+  secret: ${JWT_SECRET:your-256-bit-secret-key-here-change-in-production-please-make-it-long-enough}
+  expiration: 604800000
+
+telegram:
+  bot:
+    token: ${TELEGRAM_BOT_TOKEN}
+
 server:
   port: 8080
   address: localhost

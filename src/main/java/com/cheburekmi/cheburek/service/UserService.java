@@ -31,11 +31,23 @@ public class UserService {
         }
     }
 
+    public User getOrCreateUserEntity(String telegramId) {
+        Optional<User> user = userRepository.findByTelegramId(telegramId);
+        if (user.isPresent()) {
+            return user.get();
+        } else  {
+            User newUser = createUser(telegramId);
+            userRepository.save(newUser);
+            return newUser;
+        }
+    }
+
     private User createUser(String telegramId) {
         User entity = new User();
         entity.setTelegramId(telegramId);
         entity.setUserCode(codeGenerationService.generateUniqueUserCode());
         entity.setLoyaltyPoints(0L);
+        entity.setIsAdmin(false);
 
         return entity;
     }

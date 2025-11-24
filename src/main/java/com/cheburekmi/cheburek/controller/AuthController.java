@@ -36,7 +36,7 @@ public class AuthController {
                     .body("Could not extract Telegram ID");
         }
 
-        User user = userService.getOrCreateUser(telegramId);
+        User user = userService.getOrCreateUserEntity(telegramId);
         
         String token = jwtService.generateToken(user.getTelegramId(), user.getIsAdmin());
         UserDto userDto = userMapper.toDto(user);

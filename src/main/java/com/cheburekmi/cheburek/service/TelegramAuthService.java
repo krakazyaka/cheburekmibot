@@ -26,6 +26,19 @@ public class TelegramAuthService {
                 return false;
             }
 
+            String authDate = params.get("auth_date");
+            if (authDate == null) {
+                return false;
+            }
+
+            long authTimestamp = Long.parseLong(authDate);
+            long currentTimestamp = System.currentTimeMillis() / 1000;
+            long timeDifference = currentTimestamp - authTimestamp;
+            
+            if (timeDifference > 300) {
+                return false;
+            }
+
             params.remove("hash");
 
             String dataCheckString = params.entrySet().stream()
