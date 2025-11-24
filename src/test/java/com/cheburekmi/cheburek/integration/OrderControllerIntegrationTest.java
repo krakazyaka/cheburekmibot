@@ -85,10 +85,13 @@ class OrderControllerIntegrationTest extends BaseIntegrationTest {
 
         OrderItemDto itemDto = new OrderItemDto();
         itemDto.setMenuItemId(testMenuItem.getId().toString());
+        itemDto.setName("Test Item");
         itemDto.setQuantity(2);
         itemDto.setIsXL(false);
+        itemDto.setPrice(BigDecimal.valueOf(150));
 
         orderDto.setOrderItems(List.of(itemDto));
+        orderDto.setTotal(BigDecimal.valueOf(150));
 
         mockMvc.perform(post("/api/orders")
                         .header("Authorization", "Bearer " + testUserToken)
@@ -107,8 +110,6 @@ class OrderControllerIntegrationTest extends BaseIntegrationTest {
         Order order = new Order();
         order.setUserId(testUser.getId());
         order.setTotal(BigDecimal.valueOf(300));
-        order.setSubtotal(BigDecimal.valueOf(280));
-        order.setTax(BigDecimal.valueOf(20));
         order.setNotes("Existing order");
         orderRepository.save(order);
 
@@ -123,6 +124,7 @@ class OrderControllerIntegrationTest extends BaseIntegrationTest {
     void shouldRejectOrderWithoutAuthentication() throws Exception {
         OrderDto orderDto = new OrderDto();
         orderDto.setOrderItems(new ArrayList<>());
+        orderDto.setTotal(BigDecimal.valueOf(150));
 
         mockMvc.perform(post("/api/orders")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -142,16 +144,12 @@ class OrderControllerIntegrationTest extends BaseIntegrationTest {
         Order otherOrder = new Order();
         otherOrder.setUserId(otherUser.getId());
         otherOrder.setTotal(BigDecimal.valueOf(500));
-        otherOrder.setSubtotal(BigDecimal.valueOf(470));
-        otherOrder.setTax(BigDecimal.valueOf(30));
         otherOrder.setNotes("Other user order");
         orderRepository.save(otherOrder);
 
         Order myOrder = new Order();
         myOrder.setUserId(testUser.getId());
         myOrder.setTotal(BigDecimal.valueOf(300));
-        myOrder.setSubtotal(BigDecimal.valueOf(280));
-        myOrder.setTax(BigDecimal.valueOf(20));
         myOrder.setNotes("My order");
         orderRepository.save(myOrder);
 

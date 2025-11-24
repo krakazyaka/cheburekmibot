@@ -22,12 +22,6 @@ public class Order {
     private OrderStatus status;
     
     @Column(precision = 10, scale = 2, nullable = false)
-    private BigDecimal subtotal;
-    
-    @Column(precision = 10, scale = 2, nullable = false)
-    private BigDecimal tax;
-    
-    @Column(precision = 10, scale = 2, nullable = false)
     private BigDecimal total;
 
     @Column(name = "notes")

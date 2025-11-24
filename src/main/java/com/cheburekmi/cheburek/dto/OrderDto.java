@@ -11,8 +11,6 @@ public class OrderDto {
     private Long id;
     private String userId;
     private String status;
-    private BigDecimal subtotal;
-    private BigDecimal tax;
     private BigDecimal total;
     private String notes;
     private List<OrderItemDto> orderItems;
