@@ -107,6 +107,8 @@ class OrderControllerIntegrationTest extends BaseIntegrationTest {
         Order order = new Order();
         order.setUserId(testUser.getId());
         order.setTotal(BigDecimal.valueOf(300));
+        order.setSubtotal(BigDecimal.valueOf(280));
+        order.setTax(BigDecimal.valueOf(20));
         order.setNotes("Existing order");
         orderRepository.save(order);
 
@@ -125,7 +127,7 @@ class OrderControllerIntegrationTest extends BaseIntegrationTest {
         mockMvc.perform(post("/api/orders")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(orderDto)))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isForbidden());
     }
 
     @Test
@@ -140,12 +142,16 @@ class OrderControllerIntegrationTest extends BaseIntegrationTest {
         Order otherOrder = new Order();
         otherOrder.setUserId(otherUser.getId());
         otherOrder.setTotal(BigDecimal.valueOf(500));
+        otherOrder.setSubtotal(BigDecimal.valueOf(470));
+        otherOrder.setTax(BigDecimal.valueOf(30));
         otherOrder.setNotes("Other user order");
         orderRepository.save(otherOrder);
 
         Order myOrder = new Order();
         myOrder.setUserId(testUser.getId());
         myOrder.setTotal(BigDecimal.valueOf(300));
+        myOrder.setSubtotal(BigDecimal.valueOf(280));
+        myOrder.setTax(BigDecimal.valueOf(20));
         myOrder.setNotes("My order");
         orderRepository.save(myOrder);
 

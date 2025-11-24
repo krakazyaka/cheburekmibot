@@ -96,7 +96,10 @@ public class OrderService {
             subtotal = subtotal.add(lineTotal);
         }
         
-        order.setTotal(subtotal);
+        BigDecimal tax = BigDecimal.ZERO;
+        order.setSubtotal(subtotal);
+        order.setTax(tax);
+        order.setTotal(subtotal.add(tax));
     }
 
     public List<OrderDto> getOrdersByUserId(String userId) {
