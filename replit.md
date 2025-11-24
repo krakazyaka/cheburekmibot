@@ -6,6 +6,7 @@ This is a Telegram Web App for "Чебуречная Вкус Востока" (C
 - **Backend**: Spring Boot REST API (Java 19, port 8080)
 - **Frontend**: Static HTML/CSS/JavaScript served on port 5000
 - **Database**: PostgreSQL with Liquibase migrations
+- **Tests**: Integration tests with H2 in-memory database
 
 ## User Preferences
 
@@ -81,6 +82,7 @@ The UI is structured with:
 - **ORM**: Hibernate/JPA
 - **Migrations**: Liquibase (SQL-based)
 - **Mapping**: MapStruct for DTO conversions
+- **Testing**: JUnit 5, Spring Boot Test, H2 Database
 
 ### Architecture Pattern
 **Strict Repository-Service-Controller (RSC) Pattern**
@@ -91,7 +93,7 @@ The backend follows a strict three-layer architecture:
    - UserRepository, OrderRepository, MenuItemRepository, AddonRepository, LoyaltyCardRepository, LoyaltyCodeRepository
    
 2. **Service Layer**: Business logic and transaction management
-   - OrderService: Order creation, retrieval, cheburek counting
+   - OrderService: Order creation, retrieval, cheburek counting, server-side validation
    - AdminService: Order status management, loyalty points awarding
    - AddonService: Addon CRUD operations
    
@@ -102,6 +104,33 @@ The backend follows a strict three-layer architecture:
 
 ### Recent Changes (November 24, 2025)
 
+**Integration Tests Infrastructure**:
+- Added H2 in-memory database for testing (no Docker required)
+- BaseIntegrationTest with Spring Boot Test + MockMvc + ActiveProfiles("test")
+- Test configuration in `src/test/resources/application-test.properties`
+- Liquibase disabled for tests, Hibernate auto-DDL enabled
+
+**AuthController Tests (4/4 passing)**:
+- Valid Telegram initData authentication
+- Invalid HMAC hash rejection
+- Expired auth_date rejection (>300 seconds)
+- New user creation on first login
+
+**OrderController Tests (3/4 passing)**:
+- Get my orders successfully
+- Ownership isolation between users
+- Authentication required for all endpoints
+- Note: Create order test requires OrderItem ID schema fix
+
+**Order Entity Enhancements**:
+- Added @PrePersist onCreate() to auto-set createdAt and status=CREATED
+- Ensures data integrity without manual intervention
+
+**OrderDto and OrderService**:
+- Added subtotal and tax fields to OrderDto
+- OrderService.validateAndRecalculateOrder() now sets subtotal (calculated), tax (zero), total (subtotal + tax)
+- Tax computation can be extended when business rules are defined
+
 **JWT-Based Authentication System**:
 - Implemented complete authentication system using JWT tokens
 - Telegram initData validation with HMAC-SHA256 signature verification
@@ -111,6 +140,14 @@ The backend follows a strict three-layer architecture:
 - Endpoint protection with @PreAuthorize annotations
 - Ownership validation: users can only access their own data
 
+**Server-Side Order Validation**:
+- MenuItem existence and availability check
+- Quantity must be greater than zero
+- Prices fetched from database catalog (client prices ignored)
+- XL option validated (2x price if available)
+- Addon existence, availability, and menu item binding validated
+- Total recalculated server-side to prevent tampering
+
 **Security Architecture**:
 - **AuthController**: POST /auth/login endpoint for Telegram authentication
 - **JwtService**: JWT token generation and validation using JJWT 0.12.5
@@ -119,7 +156,7 @@ The backend follows a strict three-layer architecture:
 - **SecurityConfig**: Configures Spring Security with stateless session management
 
 **Access Control**:
-- Public endpoints: /auth/**, /api/menu/**, /api/addons/**
+- Public endpoints: /auth/**, /api/menu/**, /api/addons/** (GET only)
 - User endpoints: /api/orders/**, /api/user/** (requires ROLE_USER + ownership validation)
 - Admin endpoints: /admin/** (requires ROLE_ADMIN)
 - Addon mutations: POST/PUT/DELETE /api/addons/** (requires ROLE_ADMIN)
@@ -149,23 +186,23 @@ The backend follows a strict three-layer architecture:
 - `POST /admin/users/{userCode}/loyalty-points` - Add loyalty points to user by code
 
 **Order Endpoints**:
-- `POST /orders` - Create new order
-- `GET /orders/user/{userId}` - Get user's orders
+- `POST /api/orders` - Create new order (with server-side validation)
+- `GET /api/orders/my-orders` - Get authenticated user's orders
 
 **Addon Endpoints**:
 - `GET /api/addons` - Get all addons
 - `GET /api/addons/available` - Get available addons
 - `GET /api/addons/{id}` - Get addon by ID
-- `POST /api/addons` - Create addon
-- `PUT /api/addons/{id}` - Update addon
-- `DELETE /api/addons/{id}` - Delete addon
+- `POST /api/addons` - Create addon (admin only)
+- `PUT /api/addons/{id}` - Update addon (admin only)
+- `DELETE /api/addons/{id}` - Delete addon (admin only)
 
 ### Database Schema
 
 **Core Tables**:
-- `users` - User accounts with telegram_id and user_code
+- `users` - User accounts with telegram_id and user_code (id is VARCHAR/UUID)
 - `menu_items` - Food items with categories (CHEBUR, DRINKS, SNACKS, DESSERTS)
-- `orders` - Orders with status tracking
+- `orders` - Orders with status tracking (user_id is VARCHAR to match users.id)
 - `order_items` - Items in each order
 - `loyalty_cards` - User loyalty progress
 - `loyalty_codes` - One-time loyalty codes
@@ -179,6 +216,7 @@ The backend follows a strict three-layer architecture:
 - Loyalty points awarded based on total item quantity in completed orders
 - User lookup supports both telegram_id and user_code
 - Transactional safety with pre-validation before status changes
+- Server-side price calculation prevents client-side tampering
 
 ### Configuration
 - Database connection via environment variables (DATABASE_URL, PGUSER, PGPASSWORD)
@@ -186,3 +224,9 @@ The backend follows a strict three-layer architecture:
 - Telegram Bot Token: TELEGRAM_BOT_TOKEN (for initData validation)
 - Server runs on localhost:8080
 - Liquibase automatically applies migrations on startup
+
+### Testing
+- Integration tests use H2 in-memory database (PostgreSQL compatibility mode)
+- Test profile: `src/test/resources/application-test.properties`
+- Run tests: `./gradlew test`
+- Current status: 7/8 integration tests passing (AuthController 4/4, OrderController 3/4)
