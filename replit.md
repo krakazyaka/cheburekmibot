@@ -2,7 +2,10 @@
 
 ## Overview
 
-This is a Telegram Web App for "Чебуречная Вкус Востока" (Cheburek House "Taste of the East"), a food ordering application. The project is a client-side web application designed to run within the Telegram messaging platform, allowing users to browse and order food items directly through Telegram's WebApp interface.
+This is a Telegram Web App for "Чебуречная Вкус Востока" (Cheburek House "Taste of the East"), a food ordering application. The project consists of:
+- **Backend**: Spring Boot REST API (Java 19, port 8080)
+- **Frontend**: Static HTML/CSS/JavaScript served on port 5000
+- **Database**: PostgreSQL with Liquibase migrations
 
 ## User Preferences
 
@@ -68,9 +71,94 @@ The UI is structured with:
    - Purpose: Telegram platform integration, user authentication, payment processing
    - Integration: Client-side JavaScript SDK
 
-### Potential Future Dependencies
-Based on the application type, the following may be added:
-- **Backend API**: For menu management, order processing, and business logic
-- **Database**: For storing menu items, orders, user preferences (likely PostgreSQL with Drizzle ORM if following standard patterns)
-- **Payment Gateway**: If using non-Telegram payment methods
-- **Analytics**: For tracking user behavior and order patterns
+## Backend Architecture
+
+### Technology Stack
+- **Framework**: Spring Boot 3.4.11
+- **Language**: Java 19
+- **Build Tool**: Gradle 8.14.3
+- **Database**: PostgreSQL
+- **ORM**: Hibernate/JPA
+- **Migrations**: Liquibase (SQL-based)
+- **Mapping**: MapStruct for DTO conversions
+
+### Architecture Pattern
+**Strict Repository-Service-Controller (RSC) Pattern**
+
+The backend follows a strict three-layer architecture:
+
+1. **Repository Layer**: JPA repositories for database access
+   - UserRepository, OrderRepository, MenuItemRepository, AddonRepository, LoyaltyCardRepository, LoyaltyCodeRepository
+   
+2. **Service Layer**: Business logic and transaction management
+   - OrderService: Order creation, retrieval, cheburek counting
+   - AdminService: Order status management, loyalty points awarding
+   - AddonService: Addon CRUD operations
+   
+3. **Controller Layer**: REST API endpoints
+   - OrderController: User-facing order endpoints
+   - AdminController: Admin endpoints for order and user management
+   - AddonController: Addon management endpoints
+
+### Recent Changes (November 24, 2025)
+
+**AdminController Implementation**:
+- Added admin functionality for order and loyalty management
+- Implemented order status workflow: CREATED → IN_PROGRESS → READY → DONE
+- Automatic loyalty points awarding when orders are completed
+- Manual loyalty points management by user code
+
+**Order Status Flow**:
+- New orders start with status CREATED
+- Admin can move orders through statuses sequentially
+- Upon completion (DONE status), loyalty points are automatically awarded equal to the number of items in the order
+- Robust null-safety and user validation before status changes
+
+**Database Migrations**:
+- Restructured from XML to SQL files (9 base tables + 1 status update migration)
+- Each table has its own migration file in `db/changelog/changes/`
+- Migration 010 updates existing order statuses to new enum values
+
+### API Endpoints
+
+**Admin Endpoints**:
+- `GET /admin/orders` - Get all orders sorted by creation date (newest first)
+- `POST /admin/orders/{orderId}/move` - Move order to next status in workflow
+- `POST /admin/users/{userCode}/loyalty-points` - Add loyalty points to user by code
+
+**Order Endpoints**:
+- `POST /orders` - Create new order
+- `GET /orders/user/{userId}` - Get user's orders
+
+**Addon Endpoints**:
+- `GET /api/addons` - Get all addons
+- `GET /api/addons/available` - Get available addons
+- `GET /api/addons/{id}` - Get addon by ID
+- `POST /api/addons` - Create addon
+- `PUT /api/addons/{id}` - Update addon
+- `DELETE /api/addons/{id}` - Delete addon
+
+### Database Schema
+
+**Core Tables**:
+- `users` - User accounts with telegram_id and user_code
+- `menu_items` - Food items with categories (CHEBUR, DRINKS, SNACKS, DESSERTS)
+- `orders` - Orders with status tracking
+- `order_items` - Items in each order
+- `loyalty_cards` - User loyalty progress
+- `loyalty_codes` - One-time loyalty codes
+- `addons` - Available addons (linked to CHEBUR items only)
+- `menu_item_addons` - Many-to-Many relationship
+- `order_item_addons` - Addons selected in orders
+
+**Design Decisions**:
+- Addons only available for CHEBUR category items
+- Order items store denormalized data (name, price) for historical accuracy
+- Loyalty points awarded based on total item quantity in completed orders
+- User lookup supports both telegram_id and user_code
+- Transactional safety with pre-validation before status changes
+
+### Configuration
+- Database connection via environment variables (DATABASE_URL, PGUSER, PGPASSWORD)
+- Server runs on localhost:8080
+- Liquibase automatically applies migrations on startup
