@@ -1,8 +1,8 @@
 package com.cheburekmi.cheburek.entity;
 
 public enum OrderStatus {
-    PENDING,
-    PREPARING,
+    CREATED,
+    IN_PROGRESS,
     READY,
     DONE
 }
