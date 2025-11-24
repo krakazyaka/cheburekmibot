@@ -1,7 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import cheburekIcon from "@assets/generated_images/cheburek_icon_illustration_c103b5e4.png";
 
 interface LoyaltyCardProps {
   current: number;
@@ -33,12 +32,9 @@ export default function LoyaltyCard({ current, target, freeAvailable = 0 }: Loya
       
       <Card className="p-6 bg-gradient-to-br from-primary/10 to-primary/5">
         <div className="flex items-start gap-4">
-          <img
-            src={cheburekIcon}
-            alt="Cheburek"
-            className="w-16 h-16 object-contain"
-            data-testid="img-cheburek-icon"
-          />
+          <div className="w-16 h-16 flex items-center justify-center text-4xl" data-testid="img-cheburek-icon">
+            🥟
+          </div>
           <div className="flex-1">
             <h3 className="text-lg font-semibold mb-1" data-testid="text-loyalty-title">
               Бонусная программа
