@@ -3,10 +3,11 @@
 ## Overview
 
 This is a Telegram Web App for "Чебуречная Вкус Востока" (Cheburek House "Taste of the East"), a food ordering application. The project consists of:
-- **Backend**: Spring Boot REST API (Java 19, port 8080)
-- **Frontend**: Static HTML/CSS/JavaScript served on port 5000
-- **Database**: PostgreSQL with Liquibase migrations
+- **Backend**: Spring Boot REST API (Java 19, port 8080) with JWT authentication
+- **Frontend**: React + Vite + TypeScript + TanStack Query (port 5000)
+- **Database**: PostgreSQL with Liquibase migrations and test data
 - **Tests**: Integration tests with H2 in-memory database
+- **Integration**: Full-stack JWT-based authentication with CORS support
 
 ## User Preferences
 
@@ -104,6 +105,32 @@ The backend follows a strict three-layer architecture:
 
 ### Recent Changes (November 24, 2025)
 
+**Full-Stack Integration Completed**:
+- React frontend integrated with Spring Boot backend via JWT authentication
+- Vite development server configured with proxy to backend (port 8080)
+- JWT tokens stored in localStorage with automatic Authorization header injection
+- CORS enabled for localhost:5000 and *.replit.dev domains
+- Method-level security annotations on OrderController (removed class-level to allow admin access)
+
+**New Backend Endpoints**:
+- POST /api/users/find-or-create - Telegram user authentication, returns JWT token
+- GET /api/loyalty/{userId} - Get user loyalty card information
+- PATCH /api/orders/{orderId}/status - Admin endpoint for order status updates
+- POST /api/admin/offline-purchase - Award loyalty points for offline purchases
+
+**Frontend Configuration**:
+- Vite config with API proxy (/api, /auth, /admin → localhost:8080)
+- JWT interceptor in queryClient.ts (automatic token management)
+- package.json with React, TanStack Query, Wouter, Tailwind dependencies
+- TypeScript configuration with path aliases (@/, @shared/, @assets/)
+
+**Test Data Created**:
+- 10 menu items across all categories (CHEBUR, DRINKS, SNACKS, DESSERTS)
+- 4 addons linked to cheburek items
+- 11 menu_item_addons relationships
+
+**Previous Integration Infrastructure**:
+
 **Integration Tests Infrastructure**:
 - Added H2 in-memory database for testing (no Docker required)
 - BaseIntegrationTest with Spring Boot Test + MockMvc + ActiveProfiles("test")
@@ -186,8 +213,15 @@ The backend follows a strict three-layer architecture:
 - `POST /admin/users/{userCode}/loyalty-points` - Add loyalty points to user by code
 
 **Order Endpoints**:
-- `POST /api/orders` - Create new order (with server-side validation)
-- `GET /api/orders/my-orders` - Get authenticated user's orders
+- `POST /api/orders` - Create new order (with server-side validation, requires ROLE_USER)
+- `GET /api/orders/my-orders` - Get authenticated user's orders (requires ROLE_USER)
+- `PATCH /api/orders/{orderId}/status` - Update order status (requires ROLE_ADMIN)
+
+**User Endpoints**:
+- `POST /api/users/find-or-create` - Find or create user by Telegram ID, returns JWT token
+
+**Loyalty Endpoints**:
+- `GET /api/loyalty/{userId}` - Get loyalty card for user
 
 **Addon Endpoints**:
 - `GET /api/addons` - Get all addons
