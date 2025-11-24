@@ -40,7 +40,7 @@ public class OrderController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         
-        order.setUserId(Long.parseLong(user.get().getId()));
+        order.setUserId(user.get().getId());
         
         orderService.createOrder(order);
         return ResponseEntity.ok().build();
@@ -58,6 +58,6 @@ public class OrderController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         
-        return ResponseEntity.ok(orderService.getOrdersByUserId(Long.parseLong(user.get().getId())));
+        return ResponseEntity.ok(orderService.getOrdersByUserId(user.get().getId()));
     }
 }

@@ -27,7 +27,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/api/menu/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/addons", "/api/addons/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/addons/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/addons").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

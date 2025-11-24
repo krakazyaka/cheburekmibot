@@ -8,6 +8,7 @@ import lombok.Data;
 @Table(name = "users")
 public class User {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
     
     @Column(name = "telegram_id", nullable = false, unique = true)
