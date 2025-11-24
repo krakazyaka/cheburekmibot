@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Чебуречная "Вкус Востока"</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #fef5e7 0%, #fff8f0 100%);
+            color: #2c2c2c;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px 0;
+            border-bottom: 2px solid #e67e22;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #e67e22;
+            margin-bottom: 10px;
+        }
+
+        .tagline {
+            color: #7f8c8d;
+            font-size: 16px;
+        }
+
+        .category-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .menu-item {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            transition: transform 0.2s;
+        }
+
+        .menu-item:active {
+            transform: scale(0.98);
+        }
+
+        .item-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            background: #f8f9fa;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-name {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .item-description {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .item-price {
+            font-weight: bold;
+            color: #e67e22;
+            font-size: 18px;
+        }
+
+        .button {
+            background: #e67e22;
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+
+        .button:active {
+            background: #d35400;
+        }
+
+        .cart-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #e67e22;
+            color: white;
+            border: none;
+            box-shadow: 0 4px 12px rgba(230, 126, 34, 0.3);
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .promo-banner {
+            background: linear-gradient(45deg, #e67e22, #f39c12);
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🥟 ЧЕБУРЕЧНАЯ</div>
+            <div class="tagline">Настоящий вкус с хрустящей корочкой</div>
+        </div>
+
+        <div class="promo-banner">
+            🎉 Счастливые часы: с 15:00 до 17:00 скидка 20%!
+        </div>
+
+        <div class="category-section">
+            <div class="section-title">🍽 Наше меню</div>
+            
+            <div class="menu-item" onclick="addToCart('Чебурек с мясом', 190)">
+                <div class="item-image">🥟</div>
+                <div class="item-info">
+                    <div class="item-name">Чебурек с мясом</div>
+                    <div class="item-description">Сочная говядина с луком и специями</div>
+                    <div class="item-price">190 ₽</div>
+                </div>
+            </div>
+
+            <div class="menu-item" onclick="addToCart('Чебурек с сыром', 170)">
+                <div class="item-image">🧀</div>
+                <div class="item-info">
+                    <div class="item-name">Чебурек с сыром</div>
+                    <div class="item-description">Адыгейский сыр с зеленью</div>
+                    <div class="item-price">170 ₽</div>
+                </div>
+            </div>
+
+            <div class="menu-item" onclick="addToCart('Чебурек с картошкой', 150)">
+                <div class="item-image">🥔</div>
+                <div class="item-info">
+                    <div class="item-name">Чебурек с картошкой</div>
+                    <div class="item-description">С картофелем и луком</div>
+                    <div class="item-price">150 ₽</div>
+                </div>
+            </div>
+        </div>
+
+        <button class="button" onclick="showOrderForm()">
+            🛍 Сделать заказ
+        </button>
+
+        <button class="cart-button" onclick="showCart()">
+            🛒
+        </button>
+    </div>
+
+    <!-- Модальное окно корзины -->
+    <div id="cartModal" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 1000; padding: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2>🛒 Ваш заказ</h2>
+            <button onclick="closeCart()" style="background: none; border: none; font-size: 24px; cursor: pointer;">✕</button>
+        </div>
+        <div id="cartItems"></div>
+        <div id="cartTotal" style="font-size: 20px; font-weight: bold; margin: 20px 0;"></div>
+        <button class="button" onclick="confirmOrder()">✅ Подтвердить заказ</button>
+    </div>
+
+    <script>
+        // Инициализация Telegram Web App
+        let tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.MainButton.setText("Открыть меню").show();
+
+        let cart = [];
+
+        function addToCart(name, price) {
+            cart.push({ name, price });
+            updateCart();
+            tg.HapticFeedback.impactOccurred('light');
+        }
+
+        function updateCart() {
+            const cartItems = document.getElementById('cartItems');
+            const cartTotal = document.getElementById('cartTotal');
+            
+            cartItems.innerHTML = '';
+            let total = 0;
+            
+            cart.forEach((item, index) => {
+                total += item.price;
+                const itemElement = document.createElement('div');
+                itemElement.className = 'menu-item';
+                itemElement.innerHTML = `
+                    <div class="item-info">
+                        <div class="item-name">${item.name}</div>
+                        <div class="item-price">${item.price} ₽</div>
+                    </div>
+                    <button onclick="removeFromCart(${index})" style="background: none; border: none; font-size: 20px; cursor: pointer;">❌</button>
+                `;
+                cartItems.appendChild(itemElement);
+            });
+            
+            cartTotal.textContent = `Итого: ${total} ₽`;
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCart();
+        }
+
+        function showCart() {
+            document.getElementById('cartModal').classList.remove('hidden');
+        }
+
+        function closeCart() {
+            document.getElementById('cartModal').classList.add('hidden');
+        }
+
+        function showOrderForm() {
+            tg.showPopup({
+                title: 'Как заберете заказ?',
+                message: 'Выберите способ получения',
+                buttons: [
+                    {id: 'pickup', type: 'default', text: '🥡 Самовывоз'},
+                    {id: 'delivery', type: 'ok', text: '🚗 Доставка'}
+                ]
+            }, function(buttonId) {
+                if(buttonId === 'pickup') {
+                    tg.showAlert('Заказ оформлен! Ждем вас в нашей чебуречной!');
+                } else if(buttonId === 'delivery') {
+                    tg.showAlert('Скоро с вами свяжется оператор для уточнения адреса!');
+                }
+            });
+        }
+
+        function confirmOrder() {
+            if (cart.length === 0) {
+                tg.showAlert('Добавьте товары в корзину!');
+                return;
+            }
+            
+            tg.showConfirm('Подтвердить заказ?', function(confirmed) {
+                if (confirmed) {
+                    tg.showAlert('Спасибо за заказ! Скоро приготовим ваш заказ!');
+                    cart = [];
+                    closeCart();
+                    updateCart();
+                }
+            });
+        }
+
+        // Обработка данных от Telegram
+        tg.onEvent('viewportChanged', function() {
+            tg.MainButton.isVisible && tg.MainButton.hide();
+        });
+    </script>
+</body>
+</html>
