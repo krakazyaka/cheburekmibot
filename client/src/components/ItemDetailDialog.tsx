@@ -32,7 +32,7 @@ export default function ItemDetailDialog({
   const [isXL, setIsXL] = useState(false);
   const [selectedAddOns, setSelectedAddOns] = useState<Set<string>>(new Set());
 
-  const isCheburek = item.category === "chebureks";
+  const isCheburek = item.category === "CHEBUR";
   
   const toggleAddOn = (addOnId: string) => {
     setSelectedAddOns((prev) => {
@@ -72,15 +72,6 @@ export default function ItemDetailDialog({
             className="w-full h-[280px] object-cover"
             data-testid="img-item-detail"
           />
-          <Button
-            size="icon"
-            variant="secondary"
-            className="absolute top-3 right-3 rounded-full shadow-lg z-10"
-            onClick={onClose}
-            data-testid="button-close-dialog"
-          >
-            <X className="w-4 h-4" />
-          </Button>
         </div>
 
         <div className="p-6 space-y-4">

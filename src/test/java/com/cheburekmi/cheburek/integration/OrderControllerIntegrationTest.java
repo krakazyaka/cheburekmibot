@@ -9,7 +9,6 @@ import com.cheburekmi.cheburek.entity.User;
 import com.cheburekmi.cheburek.repository.MenuItemRepository;
 import com.cheburekmi.cheburek.repository.OrderRepository;
 import com.cheburekmi.cheburek.repository.UserRepository;
-import com.cheburekmi.cheburek.service.JwtService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

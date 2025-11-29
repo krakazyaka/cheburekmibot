@@ -11,10 +11,10 @@ export default function CategoryChips({
   onSelectCategory,
 }: CategoryChipsProps) {
   const categories = [
-    { id: "chebureks", label: "Чебуреки", icon: UtensilsCrossed },
-    { id: "combo", label: "Комбо", icon: Package },
-    { id: "piroги", label: "Чебуреки-пироги", icon: Cookie },
-    { id: "drinks", label: "Напитки", icon: Coffee },
+    { id: "CHEBUR", label: "Чебуреки", icon: UtensilsCrossed },
+    { id: "COMBO", label: "Комбо", icon: Package },
+    { id: "PIROG", label: "Чебуреки-пироги", icon: Cookie },
+    { id: "DRINKS", label: "Напитки", icon: Coffee },
   ];
 
   return (

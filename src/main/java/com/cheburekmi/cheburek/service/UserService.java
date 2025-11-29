@@ -7,7 +7,6 @@ import com.cheburekmi.cheburek.repository.UserRepository;
 import com.cheburekmi.cheburek.util.CodeGenerationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.Optional;
 
@@ -28,17 +27,6 @@ public class UserService {
             User newUser = createUser(telegramId);
             userRepository.save(newUser);
             return userMapper.toDto(newUser);
-        }
-    }
-
-    public User getOrCreateUserEntity(String telegramId) {
-        Optional<User> user = userRepository.findByTelegramId(telegramId);
-        if (user.isPresent()) {
-            return user.get();
-        } else  {
-            User newUser = createUser(telegramId);
-            userRepository.save(newUser);
-            return newUser;
         }
     }
 

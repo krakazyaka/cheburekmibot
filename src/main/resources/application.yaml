@@ -3,9 +3,9 @@ spring:
     name: cheburek
   
   datasource:
-    url: jdbc:postgresql://${PGHOST:localhost}:${PGPORT:5432}/${PGDATABASE:cheburek}
-    username: ${PGUSER:postgres}
-    password: ${PGPASSWORD:postgres}
+    url: jdbc:postgresql://localhost:5432/habrdb
+    username: habrpguser
+    password: pgpwd4habr
     driver-class-name: org.postgresql.Driver
   
   jpa:
@@ -22,12 +22,12 @@ spring:
     enabled: true
 
 jwt:
-  secret: ${JWT_SECRET:your-256-bit-secret-key-here-change-in-production-please-make-it-long-enough}
+  secret: 8j1LcKstsPMhshhzFGsccy+DGMudYM8d2BB4P4VEMPVhXKx5ebK/S0bSihNAgSk/BayKLOM77lTeiVKqOBeB3w==
   expiration: 604800000
 
 telegram:
   bot:
-    token: ${TELEGRAM_BOT_TOKEN}
+    token: 8543724938:AAFZjNZBkx67m97I_bZ971FIID9Xu5diK7Y
 
 server:
   port: 8080

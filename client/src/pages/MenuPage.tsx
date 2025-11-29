@@ -10,7 +10,7 @@ import { useCart } from "@/contexts/CartContext";
 
 export default function MenuPage() {
   const [, setLocation] = useLocation();
-  const [selectedCategory, setSelectedCategory] = useState("chebureks");
+  const [selectedCategory, setSelectedCategory] = useState("CHEBUR");
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
   const { cart, addToCart } = useCart();
 
@@ -101,7 +101,7 @@ export default function MenuPage() {
             hasXL: selectedItem.hasXL,
             category: selectedItem.category,
           }}
-          addOns={selectedItem.category === "chebureks" ? extraItems : []}
+          addOns={selectedItem.category === "CHEBUR" ? extraItems : []}
           onAddToCart={handleAddToCart}
         />
       )}
